@@ -1,0 +1,9 @@
+
+
+ubuntu 中默认openjdk
+需更新配置
+
+update -alternatives --install /usr/bin/javac javac [JAVA_HOME]/bin/javac 300
+update -alternatives --install /usr/bin/java java [JAVA_HOME]/bin/java 300
+
+
