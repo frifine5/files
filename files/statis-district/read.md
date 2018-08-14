@@ -25,3 +25,13 @@
 	<version>4.12</version>
 	<scope>test</scope>
 </dependency>
+
+##### 2.需求数据库表格式
+CREATE TABLE `district` (
+  `dcode` varchar(6) NOT NULL,
+  `dname` varchar(16) DEFAULT NULL,
+  PRIMARY KEY (`dcode`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+##### 3. district-2017.sql是整理的脚本
