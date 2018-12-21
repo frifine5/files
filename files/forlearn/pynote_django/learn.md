@@ -253,13 +253,14 @@ server {
 4. supervisor 管理进程
 
 1)下载安装supervisor
-	pip install supervisor
-	
+​	pip install supervisor
+​	
 2)配置文件
-	/etc/supervisor/supervisord.conf		#默认配置
-	/etc/supervisor/conf.d/*.conf			#子进程配置，由默认配置的include加载
+​	/etc/supervisor/supervisord.conf		#默认配置
+​	/etc/supervisor/conf.d/*.conf			#子进程配置，由默认配置的include加载
 每个应用可以使用一个单独的.conf文件进行配置
 like below：
+
 ```
 [program:prj_name]								#项目名
 directory=/opt/bin								#脚本目录
