@@ -29,7 +29,23 @@ Spring WebFlux
     
    相应流在互操作上扮演着重要角色。它作用于库和基础组件，而对应用API不甚有用，因为它是低级别的。应用接口需要高级别、丰富、强大的API来组成异步逻辑，类似于流API，也不仅限于集合。这就是反应库所扮演的角色。
 
+   反应器是Spring WebFlux的库。它提供Mono和Flux 两种API类型，通过一组与操作者对齐的字符来处理 0到1（Mono类型）和0到N（Flux）的操作者序列。反应器是反应流的库，并且所有操作者都支持非阻塞的方式来应对压力。反应器非常关注服务端的java。它是与spring紧密相连开发的。
 
+   WebFlux要求反应器作为反应流与其它反应库交互操作的核心依赖。一般地，WebFlux API接受一个发布者作为输入，适配一个交互的反应类型，并使用它，Flux或Mono作为输出。所以可以通过任何发布者作为输入，你可以申请操作作为输出，但你需要用另一个反应库来适配使用输出信息。只要可行，WebFlux就可以使用RxJava或其它响应库。详情参见Reactive Libraries。
+
+```
+   除了Reactive APIs, WebFlux还可以与Kotlin的Coroutines APIs联用，后者是提供命令式的编程方式。下面的Kotlin代码提供了使用Coroutines APIs的例子。
+```
+
+
+
+   1.1.3 程序模型
+
+​    Spring-web模型中包括反应器基础-SpringWebFlux，包括HTTP的抽象，反应流适配器等支持服务器、编码和足以媲美ServletAPI的核心web处理API--WebHandler API并具有非阻塞特性。
+
+在基础包中，Spring WebFlux提供两种程序模型：
+
+1）Annotated Controllers（注解控制器）：
 
 
 
