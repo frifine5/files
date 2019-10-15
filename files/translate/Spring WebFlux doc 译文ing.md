@@ -45,7 +45,57 @@ Spring WebFlux
 
 在基础包中，Spring WebFlux提供两种程序模型：
 
-1）Annotated Controllers（注解控制器）：
+1）Annotated Controllers（注解控制器）：和SpringMvc一样，是基于注解的spring-web模块。SpringMVC和WebFlux控制器同样支持响应返回类型，因此很难将它们区分开。值得注意的不同点是WebFlux也支持响应@RequestBody的声明。
+
+2）Functional Endpoints（函数式端点）：这是基于Lambda，轻量的，函数式编程模型。你可以理解为它是一个小的库，或者是一个单元集合，它能路由和处理请求。它和注解控制器很大的不同是它从始至终掌握着程序的处理，而注解是声明了意图之后就等待被回调。
+
+
+
+   1.1.4 适用性/范围
+
+​	SpringMvc 或者 WebFlux
+
+​    二则其一是不全面的。实际上，两者一起使用才能扩展适用范围。两者都被设计成为彼此连接协调使用，他们一边适用又彼此互补。下图表示两者的关系，它们有公共的，也有各自独特的支持。
+
+ ![spring mvc and webflux venn](https://docs.spring.io/spring/docs/current/spring-framework-reference/images/spring-mvc-and-webflux-venn.png) 
+
+   我们建议你遵守以下几点规范：
+
+​	如果您是使用的SpringMVC应用并运行的很好，那么无需改变。命令式编程是易写易读和调试的。您可最大限度的选择库，因为旧的库大多数都是阻塞的。
+
+   如果你已经购买的非阻塞web堆栈，那么SpringWebFlux提供一个在此领域里同样优秀的模块。它还提供了多种服务器（Netty, Tomcat, Jetty, Undertown, Servlet3.1+Container)，多种编程模式(注解和函数式编程)，多种反应器库（Reactor, RxJava, ...）可供选择。
+
+   如果你对轻量的函数式编程框架有兴趣，使用JAVA8的lambda或Kotlin，你也可以使用SpringWebFlux函数式web端点。它也可以在小服务或不复杂的微服务的应用中表现出它的高透明度和控制的优势。
+
+   在微服务架构中，你可以混合使用SpringMVC和SpringWebFlux控制器或函数式端点。它们同样支持注解和函数式模型，以便您可以根据需要选择好用的工具。
+
+   检查依赖是一个简单验证的方式。如果你使用了阻塞的持久化APIs(如JPA,JDBC)或者网络APIs，那么SpringMVC至少是目前常用架构中最好的选择。在技术上，您也可以在单线程中使用Reactor和RxJava去执行阻塞业务，但这将无法充分发挥非阻塞堆栈的优势。
+
+   如果你使用SpringMVC应用调用远程服务，试试reactive WebClient。SpringMVC控制器方法可以返回响应类型（Reactor，RxJava， 或其它）。延迟越大，那么响应式的优势就越明显。SpringMVC控制器还可以调用其它反应器组件。
+
+   如果你在一个大团队，请记住向非阻塞、函数式、声明式编程转换这个陡峭的学习曲线。在不完全切换的情况下，使用WebClient是一种实用的方法。实际上，小措施大收益。我们主张，大范围的切换应用是不必要的。如果你不能保证理解了它的优势，首先学习下非阻塞IO是如何工作的（比如Node.js的单线程的并发）和它的影响。
+
+
+
+   1.1.5 服务器
+
+​    SpringWebFlux支持在Tomcat、Jetty、Servlet3.1+容器上，运行非阻塞式的服务，如Netty和UnderTown。所有服务都是适应低级别的，通用的API，以便高级别的程序模块可以获得其支持。
+
+​    SpringWebFlux没有构建开始和结束服务。然而，使用spring的配置和WebFlux基础包组装的应用可以使用几行代码就运行起来。
+
+​    SpringBoot有一个WebFlux启动程序，可以自动执行这些步骤。默认的，启动器使用Netty，但也很容易通过更改Maven或Gradle的依赖切换到Tomcat、Jetty或UnderTown等容器。SpringBoot默认使用Netty，因为它在异步、非阻塞领域中应用更广泛，不论是作为客户端还是服务端。
+
+   Tomcat和Jetty都可以被SpringMVC和WebFlux使用。要记住，它使用哪种方式是非常不同的。SpringMVC是依赖Servlet的阻塞IO，如果应用更需要，让应用直接使用Servlet的API。SpringWebFlux依赖Servlet3.1+的非阻塞IO，在低级别的适配者使用ServletAPI而不是无保留地直接使用它。
+
+对于UnderTown，SpringWebFlux直接使用UnderTown APIs替代Servlet APIs。
+
+
+
+
+
+
+
+
 
 
 
