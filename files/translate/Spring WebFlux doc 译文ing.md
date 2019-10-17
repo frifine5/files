@@ -95,6 +95,12 @@ Spring WebFlux
 
    表现有许多特性和含义。响应式和非阻塞并不保证运行地更快。在一些场景中（如使用WebClient去执行调用服务）它们能。但在大多数情况中，它们更多的是使用非阻塞模式来工作以减轻请求的处理压力。
 
+   关键的是响应式和非阻塞使用小而固定的线程和更少的内存处理需求的能力。那可以是应用保持低负载，因为它们被圈定在一个更易预测的范围内。为了突出它的好吃，你需要一些延迟（包括使用一个又慢又不可预期的网络IO的混合）。这时，响应式堆栈就可以开始显示它的优势，并且优势是明显的。
+
+   1.1.7 并发模型
+
+   不论是SpringMVC还是WebFlux都支持注解的控制器，但它们在并发的一个关键不同之处是默认假定阻塞和线程数。
+
    在SpringMVC中，假定应用会阻塞线程，因而在处理请求时，servlet容器使用一个大的线程池来缓解潜在的阻塞。
 
    在SpringWebFlux中，假定应用不会阻塞，因而，非阻塞服务使用一个小的固定容量的线程池来处理请求。
@@ -126,6 +132,132 @@ Spring WebFlux
 配置
 
 SpringFramework没有提供启动/停止服务的支持。您可以使用服务指定的配置器APIs来陪孩子线程模型，或者，您可以使用SpringBoot，检查SpringBoot的配置选项。您还可以直接配置WebClient。至于其它的库，请参见它们各自的文档。
+
+
+
+1.2 响应式的核心
+
+   Spring-web模块包括以下响应式web应用基础的支撑：
+
+​      支持两种级别的请求处理:
+
+​		1) HttpHandler(Http处理)：Http 请求的基础协议 使用非阻塞IO、响应式流背压处理，此外还有响应式的Netty、UnderTown、Tomcat、Jetty和Servlet3.1+容器等适配。
+
+​         2）WebHandler API: 它是较高水平的处理请求的通用网络的API。顶层连接程序模型构建如注解的控制器和函数式的端点。
+
+​      作为客户端，它可作基本的HttpClient连接器，使用非阻塞IO和响应流来发起Http请求，也可使用响应式Netty和Jetty的HttpClient。更高级的WebClient也是基于该协议构建的。
+
+​      对于客户端和服务端，codecs用来序列化和反序列化Http请求和应答的内容。
+
+   1.2.1 Http处理器
+
+   HttpHandler是使用简单方法处理请求和应答的一个简易协议。它有意最小化，它主要也是唯一的目的是作为不同HTTP服务器APIs的最小抽象。
+
+   下表描述了所支持的服务器APIs：
+
+| 服务器名 | 使用的服务器APIs | 响应流支持 |
+|-|-|-|
+| Netty | Netty API | Reactor Netty |
+| UnderTown | UnderTown API | spring-web:Undertown to Reactive Streams bridge |
+| Tomcat | Servlet3.1 非阻塞 I/O; Tomcat API to 写使用ByteBuffers 代替byte[] | spring-web:Servlet3.1 非阻塞 I/O to Reactive Streams bridge |
+| Jetty | Servlet3.1 非阻塞 I/O; Jetty API 写使用ByteBuffers 代替byte[] | spring-web:Servlet3.1 非阻塞 I/O to Reactive Streams bridge |
+| Servlet 3.1 container | Servlet 3.1 非阻塞I/O | spring-web:Servlet3.1 非阻塞 I/O to Reactive Streams bridge |
+
+
+
+下表描述服务的依赖（详见各支持版本）
+
+| 服务器名      | 组ID                    | 工件名（Artifact name）     |
+| ------------- | ----------------------- | --------------------------- |
+| Reactor Netty | io.projectreactor.netty | reactor-netty               |
+| Undertow      | io.undertow             | undertow-core               |
+| Tomcat        | org.apache.tomcat.embed | tomcat-embed-core           |
+| Jetty         | org.eclipse.jetty       | jetty-server, jetty-servlet |
+
+The code snippets below show using the `HttpHandler` adapters with each server API:
+
+下面的代码片段是使用HttpHandler适配各个服务API的：
+
+**Reactor Netty**
+
+Java
+
+Kotlin
+
+```java
+HttpHandler handler = ...
+ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(handler);
+HttpServer.create().host(host).port(port).handle(adapter).bind().block();
+```
+
+**Undertow**
+
+Java
+
+Kotlin
+
+```java
+HttpHandler handler = ...
+UndertowHttpHandlerAdapter adapter = new UndertowHttpHandlerAdapter(handler);
+Undertow server = Undertow.builder().addHttpListener(port, host).setHandler(adapter).build();
+server.start();
+```
+
+**Tomcat**
+
+Java
+
+Kotlin
+
+```java
+HttpHandler handler = ...
+Servlet servlet = new TomcatHttpHandlerAdapter(handler);
+
+Tomcat server = new Tomcat();
+File base = new File(System.getProperty("java.io.tmpdir"));
+Context rootContext = server.addContext("", base.getAbsolutePath());
+Tomcat.addServlet(rootContext, "main", servlet);
+rootContext.addServletMappingDecoded("/", "main");
+server.setHost(host);
+server.setPort(port);
+server.start();
+```
+
+**Jetty**
+
+Java
+
+Kotlin
+
+```java
+HttpHandler handler = ...
+Servlet servlet = new JettyHttpHandlerAdapter(handler);
+
+Server server = new Server();
+ServletContextHandler contextHandler = new ServletContextHandler(server, "");
+contextHandler.addServlet(new ServletHolder(servlet), "/");
+contextHandler.start();
+
+ServerConnector connector = new ServerConnector(server);
+connector.setHost(host);
+connector.setPort(port);
+server.addConnector(connector);
+server.start();
+```
+
+**Servlet 3.1+ Container**
+
+部署war包到任何一个Servlet3.1+的容器，都可以通过实现和扩展war包里的AbstractReactiveWebInitializer.使用ServletHttpHandlerAdapter并注册为一个servlet来封装一个HttpHandler类。
+
+
+
+
+
+
+
+
+
+
 
 
 
