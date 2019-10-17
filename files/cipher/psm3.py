@@ -111,19 +111,18 @@ def CF(V_i, B_i):
         return V_i_1
 
 def hash_msg(msg):
-        len1 = len(msg)
-        reserve1 = len1 % 64
-        msg = msg + chr(0x80)
-        reserve1 = reserve1 + 1
-        for i in range(reserve1, 56):
-                msg = msg + chr(0x00)
+        len1 = len(msg) 
+        reserve1 = len1 % 64 
+        msg = msg + struct.pack("B", 128)
+        reserve1 = reserve1 + 1 
+        for i in range(reserve1, 56): 
+                msg = msg + struct.pack("B",0) 
 
-        bit_length = (len1) * 8
-        bit_length_string = struct.pack(">Q", bit_length)
-        msg = msg + bit_length_string
+        bit_length = (len1) * 8 
+        bit_length_string = struct.pack(">Q", bit_length) 
+        msg = msg + bit_length_string 
 
-        #print len(msg)
-        group_count = len(msg) / 64
+        group_count = int(len(msg) / 64 )
 
         m_1 = B = []
         for i in range(0, group_count):
@@ -140,12 +139,12 @@ def hash_msg(msg):
         return V[i+1]
 
 print "abc"
-y = hash_msg("abc")
+y = hash_msg("abc".encode())
 print "result: ",
 out_hex(y)
 
 print "abcd" * 16
-y = hash_msg("abcd" * 16)
+y = hash_msg(("abcd" * 16).encode())
 print "result: ",
 out_hex(y) 
 
