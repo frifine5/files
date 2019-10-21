@@ -1,0 +1,43 @@
+
+
+
+
+
+
+
+
+生成密钥
+
+keytool -genkeypair -alias serverkey -keystore server.keystore
+按提示输入信息
+
+或者一次输入
+keytool -genkeypair -alias serverkey -keypass 123456 -storepass 123456 -dname "C=CN,ST=BJ,L=BJ,O=CYK,OU=dev,CN=cky.com"  -keyalg RSA -keysize 2048 -validity 3650 -keystore server.keystore
+
+参数说明
+
+    storepass keystore 文件存储密码
+    keypass 私钥加解密密码
+    alias 实体别名(包括证书私钥)
+    dname 证书个人信息
+    keyalt 采用公钥算法，默认是DSA
+    keysize 密钥长度(DSA算法对应的默认算法是sha1withDSA，不支持2048长度，此时需指定RSA)
+    validity 有效期
+    keystore 指定keystore文件
+
+
+查看keystore详情
+keytool -list -keystore server.keystore -storepass 123456 -v
+
+
+导出证书
+keytool -exportcert -keystore server.keystore -file server.cer -alias serverkey -storepass 123456
+
+*******
+jks格式 转 pkcs12
+
+keytool -importkeystore -srckeystore server.keystore -destkeystore server.p12 -srcalias serverkey -destalias serverkey  -srcstoretype jks -deststoretype pkcs12 -srcstorepass 123456 -deststorepass 123456 -noprompt
+
+eg:
+keytool -importkeystore -srckeystore server.keystore -destkeystore pdfSigCer.p12 -srcalias serverkey -destalias serverkey  -srcstoretype jks -deststoretype pkcs12 -srcstorepass 123456 -deststorepass 123456 -noprompt
+
