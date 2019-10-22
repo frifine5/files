@@ -249,6 +249,174 @@ server.start();
 
 部署war包到任何一个Servlet3.1+的容器，都可以通过实现和扩展war包里的AbstractReactiveWebInitializer.使用ServletHttpHandlerAdapter并注册为一个servlet来封装一个HttpHandler类。
 
+   1.2.2 WebHandler API  
+
+   在org.springframework.web.server包中,HttpHandler 提供通用的webAPI通过多个WebExceptionHandler、WebFilter、和一个WebHandler组件来处理web请求。通过在ApplicationContext中使用auto-deteted组件或注册builder组件来注册单点WebHttpHandlerBuilder使这个链结合起来。
+
+   当在不同的HTTP服务器上使用HttpHandler时， API意在在web应用中提供一些更为宽的特性，如:
+
+​     具有属性的用户会话；
+
+​     请求属性；
+
+​     解析请求的域或主体；
+
+​     允许解析和缓存数据；
+
+​    多部分数据的抽象；
+
+​    更多。。。
+
+
+
+指定的bean类型
+
+   下表列举WebHttpHandlerBuilder组件能够在Spring ApplicationContext中自动检测或者直接注册到其中。
+
+| Bean 名称 | Bean 类型 | 数量 | 描述 |
+|-|-|-|-|
+|<any>|WebExceptionHandler|0...N|提供WebFilter实例和WebHandler链的异常处理，更多详情，参见Exceptions|
+|<any>|WebFilter|0...N|过滤器和WebHandler前后的申请拦截。更多详情，参见Filters（过滤器）|
+|webHandler|WebHandler|1|请求的处理|
+|webSessionManager|WebSessionManager|0..1|WebSession实例的管理，默认使用ServerWebExchange的DefaultWebSessonManager|
+|serverCodecConfigurer|ServerCodecConfigurer|0..1|允许HttpMessageReader实例解析数据或多部分数据，默认使用的方法是ServerWebExchange的ServerCodecConfigurer.create()。|
+|localeContextResolver|LocaleContextResolver|0..1|转换为LocaleContext，默认使用ServerWebExchange的AcceptHeaderLocaleContextResolver|
+|forwardedHeaderTransformer|ForwardedHeaderTransformer|0..1|为处理类型头，扩展并移除或仅移除，默认不使用|
+
+对于数据
+
+   ServerWebExchange 陈述以下方法来访问表单数据：
+
+java
+
+Kotlin
+
+```
+    Mono<MultiValueMap<String, String>> getFormData();
+```
+
+DefaultServerWebExchange 使用配置的HttpMessageReader 将表单数据（application/x-www-form-urlencoded)解析为一个MultiValueMap。FormHttpMessageReader配置使用ServerCodecConfigurer实例。详见WebHandler API
+
+多部分数据
+
+和在springMvc中一样
+
+ServerWebExchange 陈述如下方法访问多部分数据：
+
+java
+
+kotlin
+
+``` 
+    Mono<MultiValueMap<String, Part>> getMultipartData();
+```
+
+DefaultServerWebExchange 使用配置的HttpMessageReader<MultiValueMap<String, Part>>将 multipart/form-data解析为一个MultiValueMap对象。当前，SynchronossNIO Multipart是唯一支持的三方库，也是唯一已知的非阻塞的转换多部分请求的库。它使用ServerCodecConfigurer Bean来开启。
+
+在流中，转换多部分数据，你可以使用Flux<Part>代替HttpMessageReader<Part>来返回。例如，一个注解的控制器，使用@RequestPart支持类似Map通过名称来访问单个组件，因而解析全部多部分数据。对比之下，你可使用@RequestBody去检测内容得到Flux<Part> 而不用获取一个MultiValueMap。
+
+Forwarded Headers 转发头
+
+和SpringMVC一样
+
+   当请求穿过代理，主机，端口，其报文头有可能变了，所以它成为一个挑战，那就是如何在客户端，创建一个正确的指向主机端口和目标的链接。
+
+   RFC7239号文件，定义了HTTP转发头的协议，那就是代理将提供原始请求的信息。包括其它的非标准的头信息：如X-Forwarded-Host, X-Forwarded-Port, X-Forwarded-Proto, X-Forwarded-Ssl和X-Forwarded-Prefix.
+
+转发头转换器是一个多主机端口目标的请求的组件，它基于转发头，并且在转换完后移除它们。你可以使用forwardedHeaderTransformer来声明使用它，它将被检测和使用。
+
+因为应用无法知道头信息是代理增加的还是客户端恶意的，所以转发头需遵循一些安全注意事项。这就是为什么在代理的信任边界中需要删除来自外部的不被信任的转发信息。你也可将转发器设置为remove=true，那样就不会使用转发头信息而直接移除。
+
+``` 
+在5.1中，ForwardedHeaderFilter已经被弃用，而被ForwardedHeaderTransfrmer替代。所以转发头可在交换建立之前被处理。如果过滤器可以随处配置，那可以使用f来代替
+```
+
+   1.2.3 过滤器
+
+在WebHandler API， 你可使用WebFilter在rest处理链的前后实现拦截逻辑操作。使用WebFlux配置，注册WebFilter只需要声明一个SpringBean，和（可选的）通过@Order指定顺序。
+
+CORS (Cross-Origin Resource Sharing,跨域资源共享)
+
+Spring WebFlux通过注解或控制器提供细粒度的支持跨域资源共享的配置。然而，使用它是必须使用安全机制，基于CorsFilter，并且它的顺序必须在安全链拦截器的前面。详见CORS和CORS WebFilter。
+
+1.2.4 异常
+
+在WebHandler API中，你可使用WebExceptionHandler去处理来自WebFilter和WebHandler的异常。使用WebFlux配置，注册WebExceptionHandler易如声明一个Spring Bean，可用@Order来指定执行的顺序或者实现Ordered接口。下表描述可用的WebExceptionHandler实现类：
+
+|异常处理类|描述|
+|-|-|
+|ResponseStatusExceptionHandler|通过设置HTTP异常的状态码的应答来处理异常的类ResponseStatusException|
+| WebFluxResponseStatusExceptionHandler | ResponseStautsExceptionHandler的扩展，可以使用@ResponseStuts注解来声明任何异常。这个处理类在WebFlux配置中声明。 |
+
+   1.2.5 转码器
+
+spring-web和spring-core模块提供了字节内容往更高级对象的非阻塞IO的序列化和反序列化（功能）。如下描述：
+
+​	Encoder和Decoder是独立于HTTP 编码/解码的低级别协议。
+
+​    HttpMessageReader和HttpMessageWriter是Http消息内容的协议。
+
+​	编/解码器可在使用的应用中适配使用：编码器使用EncoderHttpMessageWriter适配，而解码器使用DecoderHttpMessageReader.
+
+   DataBuffer(数据缓存)抽象成不同的字节缓存描述(如Netty, ByteBuf, java.nio.ByteBuffer等)，同时也是转码器工作的地方。
+
+  spring-core模块提供byte[], ByteBuffer, DataBuffer, Resource 和Spring encoder和decoder等实现类。spring-web模块提供JSON，Jackson Smile, JAXB2， Protocol Buffers 和其它编解码Http message 读写数据，多部分数据内容和服务发送事件以及其它。
+
+  ClientCodecConfigurer 和 ServerCodecConfigurer 是典型的使用配置和定制化的转码器应用。参见HTTP消息转码章节。
+
+Jackson JSON
+
+   JSON和二进制JSON都是由Jackson库支持的。
+
+   Jackson2Decoder 功能如下：
+
+​       json异步非阻塞解析器用于将字节流聚合到TokenBuffer中，并用json对象来表示。
+
+​       每个TokenBuffer通过传递json 对象map来创建高级的对象。
+
+​       解析一个单值时只需要一个TokenBuffer。
+
+​      当解析一个多值时，每个TokenBuffer通过对象map像描述表格一样的对象。输入内容可以是json数组，或者类型是“application/stream+json"类型的就是按行分割的json。
+
+   Jackson2Encoder功能如下：
+
+​      对于单个值的，简单序列化成对象map；
+
+​      对于多个值的，如类型是"application/json",默认的将使用Flux#collectToList()序列化成结果集；
+
+​      对于多个值的，如类型是"application/stream+json"或"application/stream+x-jackson-smile"，使用行分割json的格式去编码和写每个值；
+
+​       对于SSE，每个事件调用Jackson2Encoder，并输出它们都没有延迟的输出交付。
+
+``` 
+Jackson2Encoder和Jackson2Decoder 默认不支持String类型，换而言之，它们使用CharSequenceEncoder来事项字符或字符序列的序列化。如果要使用string数组的，需要使用Flux#collectToList()和编码一个Mono<List<String>>.
+```
+
+  表单数据
+
+​    FormHttpMessageReader 和 FormHttpMessageWriter支持"application/x-www-form-urlencoded"的内容编码。
+
+​    服务端，内容需要被多次访问，ServerWebExchange提供ForHttpMessageReaer专门的getFormData()方法来解析内容，并缓存便于再次访问。详见WebHandler API章节。
+
+​	一旦getFormData()被使用，那么原始的数据将不可再被从requestbody中读取。因此应用需要统一通过ServerWebExchange来获取缓存表单的数据，而不是再从requestbody中读取。
+
+多部分
+
+​	多部分的读写类支持”multipart/form-data"内容的读写。在使用时，其实际解析为Flux<Part>并被放入MultiValueMap中。现在是使用同步的非阻塞的多部分解析。
+
+​    在服务端，多部分内容也会被多次访问，ServerWebExchange提供专门的getMultipartData()方法读取和重复访问。
+
+​    一旦被其读取，那么requestBody中的原始数据将不可读，为保持一致性，随后都只从这个方法中读取，而不是再从requestBody中解析。
+
+流
+
+​    当作为响应时的流数据，定期发送数据保证客户端的连接很重要。比如发送一个仅提交/空的/或者其它“no-op"的数据来保持心跳。
+
+数据缓存
+
+​	在WebFlux中， 数据缓存使用字节缓存。spring core的部分可以关联 Data Buffers and Codecs章节。理解像Netty、字节缓存被池化和计数的关键是何时释放并回收以避免内存溢出。
+
+​		WebFlux应用通常不需要担心这个问题，除非直接撤销或生产数据缓存，而不是依赖转码器来转换为高级对象。或者它们选择创建自定义的转码器。如果是这样，请复习Data Buffers and Codecs章节，尤其是Using DataBuffer。
 
 
 
@@ -271,14 +439,6 @@ server.start();
 
 
 
-   
-
-   
-
-   
-
-   
 
 
 
-   
