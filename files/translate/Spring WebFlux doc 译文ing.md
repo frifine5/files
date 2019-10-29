@@ -418,6 +418,69 @@ Jackson2Encoder和Jackson2Decoder 默认不支持String类型，换而言之，�
 
 ​		WebFlux应用通常不需要担心这个问题，除非直接撤销或生产数据缓存，而不是依赖转码器来转换为高级对象。或者它们选择创建自定义的转码器。如果是这样，请复习Data Buffers and Codecs章节，尤其是Using DataBuffer。
 
+   1.2.6 日志
+
+​    调试级别的日志在springWebflux中被设计成紧凑的，最小的，人性化的。它关注高价值位的信息，它们被一遍遍使用，而其它的只在特定问题中有用。
+
+​	跟踪级别的日志通常遵循调试日志同样的原则，但可以被用在任何问题的调试中。进一步的有些日志信息在跟踪和调试中显示不同级别的细节。
+
+   良好的日志来自于日志使用的经验。如果你发现任何不符合规定的地方，请告诉我们。
+
+日志标识
+
+   在webFlux中，单一请求可以被多个线程执行，线程号在属于同一请求的交互日志中并无作用。就是为什么webFlux日志信息默认使用请求指定的id作为前缀。
+
+   在服务端，log标识号以ServerWebExchange的LOG_ID_ATTRIBUTE属性保存，而基于该ID的完整格式化前缀来源于ServerWebExchange.getLogPrefix()函数。在客户端，日志ID号被保存在ClientRequest类的LOG_ID_ATTRIBUTE属性中，而格式化前缀从ClientRequest.logPrefix()方法生产。
+
+   敏感数据
+
+   调试和追踪日志可以记录敏感信息。所以参数和头信息默认被屏蔽，且必须显式调用才能记录下来。
+
+下面是几个服务端调用的例子：
+
+Java
+
+Kotlin
+
+```java
+@Configuration
+@EnableWebFlux
+class MyConfig implements WebFluxConfigurer {
+
+    @Override
+    public void configureHttpMessageCodecs(ServerCodecConfigurer configurer) {
+        configurer.defaultCodecs().enableLoggingRequestDetails(true);
+    }
+}
+```
+
+下面是客户端调用的例子
+
+Java
+
+Kotlin
+
+```java
+Consumer<ClientCodecConfigurer> consumer = configurer ->
+        configurer.defaultCodecs().enableLoggingRequestDetails(true);
+
+WebClient webClient = WebClient.builder()
+        .exchangeStrategies(ExchangeStrategies.builder().codecs(consumer).build())
+        .build();
+```
+
+### 1.3. 转发处理类`DispatcherHandler`
+
+
+
+
+
+
+
+
+
+
+
 
 
 
