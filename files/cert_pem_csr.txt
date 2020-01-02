@@ -1,0 +1,94 @@
+https://blog.csdn.net/xiangguiwang/article/details/76400805
+
+
+
+DER、CRT、CER、PEM格式的证书及转换
+
+ 
+
+    一、证书和编码
+
+    X.509证书,其核心是根据RFC 5280编码或数字签名的数字文档。
+
+    实际上，术语X.509证书通常指的是IETF的PKIX证书和X.509 v3证书标准的CRL 文件，即如RFC 5280（通常称为PKIX for Public Key Infrastructure（X.509））中规定的。
+
+    二、X509文件扩展
+
+    我们首先要了解的是每种类型的文件扩展名。 很多人不清楚DER，PEM，CRT和CER结尾的文件是什么，更有甚者错误地说是可以互换的。 在某些情况下，某些可以互换，最佳做法是识别证书的编码方式，然后正确标记。 正确标签的证书将更容易操纵
+
+    三、编码--决定扩展名方式
+
+        1）.DER 扩展名
+
+        .DER = DER扩展用于二进制DER编码证书。
+
+        这些文件也可能承载CER或CRT扩展。 正确的说法是“我有一个DER编码的证书”不是“我有一个DER证书”。
+
+        2）.PEM 扩展名
+
+        .PEM = PEM扩展用于不同类型的X.509v3文件，是以“ - BEGIN ...”前缀的ASCII（Base64）数据。
+
+        3）常见的扩展
+
+            3.1）.CRT 扩展名
+
+            .CRT = CRT扩展用于证书。 证书可以被编码为二进制DER或ASCII PEM。 CER和CRT扩展几乎是同义词。 最常见的于Unix 或类Unix系统。
+            3.2）.CER扩展名
+
+             CER = .crt的替代形式（Microsoft Convention）您可以在微软系统环境下将.crt转换为.cer（.both DER编码的.cer，或base64 [PEM]编码的.cer）。
+
+            可参考：https://support.comodo.com/index.php?/Knowledgebase/Article/View/361/17/how-do-i-convert-crt-file-into-the-microsoft-cer-format
+
+            .cer文件扩展名也被IE识别为 一个运行MS cryptoAPI命令的命令（特别是rundll32.exe cryptext.dll，CryptExtOpenCER），该命令显示用于导入和/或查看证书内容的对话框。 
+
+            3.3）.KEY 扩展名
+
+                 .KEY = KEY扩展名用于公钥和私钥PKCS＃8。 键可以被编码为二进制DER或ASCII PEM。
+
+    四、常见的OpenSSL证书操作
+
+    证书操作有四种基本类型。查看，转换，组合和提取。
+
+    1）查看证书
+
+     即使PEM编码的证书是ASCII，它们是不可读的。这里有一些命令可以让你以可读的形式输出证书的内容;
+
+         1.1）查看PEM编码证书
+
+        openssl x509 -in cert.pem -text -noout
+
+        openssl x509 -in cert.cer -text -noout
+
+        openssl x509 -in cert.crt -text -noout
+
+         如果您遇到这个错误，这意味着您正在尝试查看DER编码的证书，并需要使用“查看DER编码证书”中的命令。
+        unable to load certificate
+        12626:error:0906D06C:PEMroutines:PEM_read_bio:no start line:pem_lib.c:647:Expecting: TRUSTEDCERTIFICATE
+
+        1.2）查看DER编码证书
+
+        openssl x509 -in certificate.der -inform der -text -noout
+
+        如果您遇到以下错误，则表示您尝试使用DER编码证书的命令查看PEM编码证书。在“查看PEM编码的证书”中使用命令
+        unable to load certificate
+
+        13978:error:0D0680A8:asn1 encodingroutines:ASN1_CHECK_TLEN:wrong tag:tasn_dec.c:1306:
+
+        13978:error:0D07803A:asn1 encodingroutines:ASN1_ITEM_EX_D2I:nested asn1 error:tasn_dec.c:380:Type=X509
+
+    2）转换证书格式
+------------------------------------------------------------------------------------+
+    转换可以将一种类型的编码证书存入另一种。（即PEM到DER转换）					    +	
+    PEM到DER																	   	+
+    openssl x509 -in cert.crt -outform der-out cert.der							   	+
+    DER到PEM																		+
+    openssl x509 -in cert.crt -inform der -outform pem -out cert.pem				+
+------------------------------------------------------------------------------------+
+
+
+    3）组合证书
+
+    在某些情况下，将多个X.509基础设施组合到单个文件中是有利的。一个常见的例子是将私钥和公钥两者结合到相同的证书中。
+
+    组合密钥和链的最简单的方法是将每个文件转换为PEM编码的证书，然后将每个文件的内容简单地复制到一个新文件中。这适用于组合文件以在Apache中使用的应用程序。
+
