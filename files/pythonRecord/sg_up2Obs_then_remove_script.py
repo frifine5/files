@@ -53,15 +53,17 @@ for i in pdfFnList:
 
 
 if len(finFnList) > 0 :
-    f = open('bakFnList.txt', 'w')
-    f.write(str(finFnList))
-    f.close
+    print "record finish file list"
 else:
     print "finish file list is empty"
 
+f = open('bakFnList.txt', 'w')
 print "start to move finish file"
 for i in finFnList:
     if(os.path.exists(dir +"/" + i)):
+        f.write(i)
+        f.write('\n')
         os.remove(dir + "/" + i);
+f.close
 
 print "do finish!"
