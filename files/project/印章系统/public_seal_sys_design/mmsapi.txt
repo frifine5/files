@@ -1,0 +1,26 @@
+
+return >>
+code msg data
+
+<<<
+
+showVersion
+
+listAlg
+
+
+random(int bit)		hex str
+
+random
+
+
+finish:
+
+eccSign
+eccVerify
+exportPubkey
+
+
+
+
+
