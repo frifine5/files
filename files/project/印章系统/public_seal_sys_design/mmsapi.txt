@@ -6,19 +6,102 @@ code msg data
 
 showVersion
 
-listAlg
+自研mms服务
 
 
-random(int bit)		hex str
 
-random
+websocket 协议 ws://ip:port/mms/{name}
+
+功能：function
+ 1. genRandom
+	in:		json{
+				function: genRandom,
+				len: 16
+			}
+	
+	out:    json{
+				code: 0, 
+				msg: SUCCESS,
+				data: byte[] 	
+			}
+----------------------------------------------------------
+
+ 2. eccSign
+	in:		json{
+				function: genRandom,
+				index: 3,
+				data: byte[],	明文
+				pkPre: true
+			}
+	
+	out:    json{
+				code: 0, 
+				msg: SUCCESS,
+				data: byte[] 	签名值	
+			}
+
+----------------------------------------------------------
+
+ 3. eccVerify
+	in:		json{
+				function: genRandom,
+				index: 3,
+				data: byte[],	明文
+				sv: byte[],		签名值
+				pkPre: true
+			}
+	
+	out:    json{
+				code: 0, 
+				msg: SUCCESS,
+				data: {
+					pass: true,
+					info: 验证通过/失败
+				}	
+			}
+
+----------------------------------------------------------
+
+ 4. eccVerifyOut
+	in:		json{
+				function: genRandom,
+				index: 3,
+				data: byte[],	明文
+				puk: byte[],	外送的公钥：65或x509encode
+				sv: byte[],		签名值
+				pkPre: true
+			}
+	
+	out:    json{
+				code: 0, 
+				msg: SUCCESS,
+				data: {
+					pass: true,
+					info: 验证通过/失败
+				}		
+			}
+
+----------------------------------------------------------
+
+ 5. exportEccPubkey
+	in:		json{
+				function: genRandom,
+				index: 3,
+				encode: true	是否为x509encode
+			}
+	
+	out:    json{
+				code: 0, 
+				msg: SUCCESS,
+				data: byte[]
+			}
+
+----------------------------------------------------------
+
+ // 后续： eccEncrypt	eccDecrypt	
 
 
-finish:
 
-eccSign
-eccVerify
-exportPubkey
 
 
 
