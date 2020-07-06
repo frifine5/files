@@ -1,0 +1,49 @@
+两个数据库互相不存在的表
+
+select a.TABLE_SCHEMA,a.TABLE_NAME 
+from information_schema.TABLES a 
+where a.TABLE_SCHEMA='db1' and a.TABLE_NAME NOT IN(SELECT b.TABLE_NAME from information_schema.TABLES b where b.TABLE_SCHEMA='db2');
+
+select a.TABLE_SCHEMA,a.TABLE_NAME
+from information_schema.TABLES a 
+where a.TABLE_SCHEMA='db2' and a.TABLE_NAME NOT IN(SELECT b.TABLE_NAME from information_schema.TABLES b where b.TABLE_SCHEMA='db1');
+
+
+select b.TABLE_SCHEMA,b.TABLE_NAME,c.TABLE_SCHEMA,c.TABLE_NAME from 
+(select TABLE_SCHEMA,TABLE_NAME from information_schema.TABLES a where a.TABLE_SCHEMA in('db2','db1') )a left join
+(select TABLE_SCHEMA,TABLE_NAME from information_schema.TABLES a where a.TABLE_SCHEMA in('db2')) b  on a.TABLE_NAME=b.TABLE_NAME left join 
+(select TABLE_SCHEMA,TABLE_NAME from information_schema.TABLES a where a.TABLE_SCHEMA in('db1')) c on a.TABLE_NAME=c.TABLE_NAME 
+where b.TABLE_NAME is null or c.TABLE_NAME is null ; 
+
+判断两个数据库相同表的中互相不存在的字段
+
+select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_DEFAULT
+from information_schema.`COLUMNS` a 
+where a.TABLE_SCHEMA='db1' and a.COLUMN_NAME NOT IN(SELECT b.COLUMN_NAME from information_schema.`COLUMNS` b where b.TABLE_SCHEMA='db2' and a.TABLE_SCHEMA='db1'
+and a.TABLE_NAME=b.TABLE_NAME );
+
+select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_DEFAULT
+from information_schema.`COLUMNS` a 
+where a.TABLE_SCHEMA='db2' and a.COLUMN_NAME NOT IN(SELECT b.COLUMN_NAME from information_schema.`COLUMNS` b where b.TABLE_SCHEMA='db1' and a.TABLE_SCHEMA='db2'
+and a.TABLE_NAME=b.TABLE_NAME );
+
+判断两个数据库相同表的字段数据类型是否相同,这里是判断数据类型不同如果要判断数据类型的长度不同需要用COLUMN_TYPE字段
+
+select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.DATA_TYPE                     
+,b.COLUMN_DEFAULT
+from information_schema.`COLUMNS` a inner join information_schema.`COLUMNS` b on a.TABLE_SCHEMA='db1' and b.TABLE_SCHEMA='db2'
+and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.DATA_TYPE<>b.DATA_TYPE;
+
+判断两个数据库相同表的字段默认值是否相同
+
+select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.COLUMN_DEFAULT from         
+information_schema.`COLUMNS` a 
+inner join information_schema.`COLUMNS` b on a.TABLE_SCHEMA='db1' and b.TABLE_SCHEMA='db2'
+and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.COLUMN_DEFAULT<>b.COLUMN_DEFAULT;
+
+判断两个数据库相同表的字段不为空是否相同
+
+select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.COLUMN_TYPE,a.IS_NULLABLE,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.COLUMN_TYPE,b.IS_NULLABLE ,b.COLUMN_DEFAULT,b.COLUMN_COMMENT 
+from information_schema.`COLUMNS` a inner join information_schema.`COLUMNS` b 
+on a.TABLE_SCHEMA='db1' and b.TABLE_SCHEMA='db2'and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.IS_NULLABLE<>b.IS_NULLABLE
+where a.IS_NULLABLE='NO';

@@ -1,0 +1,52 @@
+
+
+
+
+
+
+
+
+
+
+	SealUserInfo parse2Obj(JSONObject obj){
+		SealUserInfo suf = new SealUserInfo();
+		Class<?> classType = suf.getClass();
+		
+		Field[] fields = classType.getDeclaredFields();
+		for (Field field : fields) {
+			String name = field.getName();
+			Class<?> propType = field.getType();
+			if(obj.containsKey(name)) {
+
+	            //获取get和set方法的名字
+	            String firstLetter = name.substring(0,1).toUpperCase();    //将属性的首字母转换为大写
+//	            String getMethodName;
+//	            if(propType == Boolean.class){
+//	            	getMethodName = "is" + firstLetter + name.substring(1);
+//	            }else{
+//	            	getMethodName = "get" + firstLetter + name.substring(1);
+//	            }
+	            String setMethodName = "set" + firstLetter + name.substring(1);            
+				try {
+//					Method getMethod = classType.getMethod(getMethodName, new Class[]{});
+					Method setMethod = classType.getMethod(setMethodName, new Class[]{propType});//注意set方法需要传入参数类型
+					//调用get方法获取旧的对象的值
+		            Object value = obj.get(name);
+		            //调用set方法将这个值复制到新的对象中去
+		            setMethod.invoke(suf, new Object[]{value});
+				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+	            
+	            
+	            
+			}
+		}
+		
+		
+		
+		
+		
+		
+		return suf;
+	}
