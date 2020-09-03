@@ -1,0 +1,43 @@
+
+单位名称： useUnitName
+单位英文/拼音简称：  useUnitEn
+统一社会信用代码： useUnitCode
+单位印章类型： 
+useUnitTypeCheckBoxElse	其它
+useUnitTypeCheckBoxGov	国家行政机关
+useUnitTypeCheckBoxGovEnt 事业单位
+useUnitTypeCheckBoxSoc	社会团体
+
+
+
+其它单位类型名称： useUnitTypeElseName
+业务类型： 
+bizTypeCheckBoxAdd		0
+bizTypeCheckBoxUpt		1
+bizTypeCheckBoxLoss		2
+bizTypeCheckBoxModf		3
+bizTypeCheckBoxReverse	4
+
+
+# 有效期： validStart
+
+单位电话： useUnitPhone
+单位邮编： useUnitZipcode
+单位传真： useUnitFax
+单位地址： useUnitAddress
+
+经办人： operator
+经办人电话： operatorPhone
+经办人邮箱： operatorMail
+经办人证件类型： 
+operatorIdTypeCard		0 身份证
+operatorIdTypeBooklet	1 户口本
+operatorIdTypePassCard 	2 护照
+operatorIdTypeHKaMpass	3 港澳通行证 Hong Kong and Macao pass
+operatorIdTypeElse 		4 其它
+
+
+经办人证件号： operatorCode
+
+
+

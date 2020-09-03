@@ -1,0 +1,56 @@
+<html>
+<head>
+	<title>体脂计算</title>
+
+<body>
+
+
+<br/><br/><br/>
+<input name='sex' placeholder='性别' /><br/>
+<input name='age' placeholder='年龄' /><br/>
+<input name='w' placeholder='体重/kg' /><br/>
+<input name='h' placeholder='身高/cm' /><br/>
+<input name='yw' placeholder='腰围/cm' /><br/>
+<br/>
+<button onclick='calc()' >计算</button>
+<br/>
+<a id='result'></a>
+
+<br/>
+<p>成年人的体脂率正常范围分别是女性20%～25%，男性15%～18%，若体脂率过高，体重超过正常值的20%以上就可视为肥胖。运动员的体脂率可随运动项目而定。一般男运动员为7%～15%，女运动员为12%—25%。</p>
+
+<script>
+function calc(){
+
+	var sex = document.getElementsByName('sex')[0].value;	
+	var age = document.getElementsByName('age')[0].value;
+	var w = document.getElementsByName('w')[0].value;
+	var h = document.getElementsByName('h')[0].value;
+	var yw = document.getElementsByName('yw')[0].value;
+	
+	var a, b;
+	if('男' === sex ){
+		a = yw *  0.74;
+		b = w * 0.082 + 44.74;
+	}else{
+		a = yw *  0.74;
+		b = w * 0.082 + 34.89;
+	}
+
+	var ri = (a -b )/w * 100;
+	console.log(' ri = ' + ri );
+	
+	document.getElementById('result').innerHTML = ri + '%';
+
+
+
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
