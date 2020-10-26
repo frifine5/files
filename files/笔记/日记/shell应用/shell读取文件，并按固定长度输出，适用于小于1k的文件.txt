@@ -1,0 +1,31 @@
+
+#!/bin/bash
+
+cat a1.txt|
+while read line
+do
+ for i in `seq 1 ${#line}`
+ do
+   a=`echo $line|cut -c $i`
+   echo -ne "$a"
+#   sleep 0.01
+
+# $[] ## 变量取整数
+   if [ $[$i % 32] -eq  "0" ];then  
+     echo ""
+   fi
+
+ done
+echo " "
+
+done
+
+
+
+
+
+
+
+
+
+
