@@ -1,0 +1,6 @@
+
+1. go项目搭建，目录有必须规定：src，bin等
+
+2. go打包： go build [-o output] [-i] [build flags] [packages]
+
+
