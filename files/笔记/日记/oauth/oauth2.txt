@@ -1,0 +1,43 @@
+
+
+
+
+广州测试环境统一身份认证测试地址 1
+http://szg.gz.gov.cn/ElectronicSeal/OnlineApplySeal/Seal/gzgzj/rollback/code?code=52c0fb69-add0-4b52-adc0-39483d0ff43a@node2
+
+
+
+
+
+
+第一步
+
+http://localhost:8060/oauth/authorize?response_type=code&client_id=net5ijy&redirect_uri=http://www.baidu.com&scope=all
+
+admin, 123456
+
+第二步： 授权页
+
+
+$2a$10$sXHKvdufrEfE2900ME40nOSBmeHRRUOF71szu22uaqqL8FIJeJDYW
+
+sXHKvdufrEfE2900ME40nOSBmeHRRUOF71szu22uaqqL8FIJeJDYW
+sXHKvdufrEfE2900ME40nO
+
+{
+    "access_token": "2aabbedf-103a-4d09-8bdb-4902599e9b92",
+    "token_type": "bearer",
+    "refresh_token": "b962704c-f8c0-4532-91a4-ee4637d99109",
+    "expires_in": 7199,
+    "scope": "all"
+}
+
+
+
+
+        oldRefRnd.setSealIndex("补发-旧:"+oldRefRnd.getSealIndex());
+		
+		
+		http://sg.digitalgd.com.cn/ebus/tif/sso/connect/getuserinfo
+		
+		

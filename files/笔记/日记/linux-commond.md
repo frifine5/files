@@ -1,0 +1,166 @@
+du -sh * | grep m
+
+
+zip -rf images.zip ./moulage/
+
+
+磁盘容量查询
+
+df
+
+    df可以查看一级文件夹大小、使用比例、档案系统及其挂入点，但对文件却无能为力。
+    
+    df 统计数据块使用情况
+
+du
+
+    du可以查看文件及文件夹的大小。
+    
+    du 统计文件大小相加
+
+
+     df #列出各文件系统的磁盘空间使用情况 
+    
+        df -ia #列出各文件系统的i节点使用情况
+        df -T #列出文件系统的类型
+        df -h #目前磁盘空间和使用情况 以更易读的方式显示
+        df -k #以单位显示磁盘的使用情况
+
+
+​     
+
+    du #查看当前目录下的，所有文件和目录
+    
+        du -ah #详细查看当前目录，子目录下的，所有文件和目录
+        du test.bz2 #查看单个文件
+        du -h --max-depth=1 work/testing
+        du -sh * | grep G # 统计当前目录，文件大小（单位：gb）
+        du -sh * | grep m # 统计当前目录，文件大小（单位：mb）
+
+
+
+
+shuatila>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+1. 应该掌握 unix 系统并且很好地理解 Linux 发行版的工作原理。
+2. 为产品设置选择一个操作系统。不需要掌握每一个操作系统，这会让你的工作陷入困境，选择其中一个并掌握它。
+3. 能轻松使用终端，可能有一些 GUI 来管理服务器，但是无论如何，必须热爱终端，它更快、更安全，坦白说，一旦掌握了用起来会更容易。
+4. 如何获取 CPU/ 系统信息（cat /proc/version，/proc/cpuinfo，uptime等。）
+5. cron 作业如何运作。在特定日期 / 时间 / 月设置 cron 作业。
+6. 了解在机器上运行的操作系统是什么（cat /etc/lsb-release）
+7. 了解不同的 unix 操作系统之间的区别，以及了解在机器上运行的操作系统（例如 cat /etc/lsb-release）
+shell 之间的区别：sh/dash/bash/ash/zsh
+如何设置和取消设置 ENV 变量。导出的 ENV 变量是临时的，如何导出永久的变量？
+什么是 shell 配置文件：〜/.bashrc，.bash_profile，.environment .. 如何为程序初始化文件“添加”设置？
+了解 Vim，其配置（.vimrc）及其一些基本提示是必须的。
+日志如何在 unix 系统中运行，什么是日志记录级别以及如何使用日志管理工具（rsyslog，logstash，fluentd，logwatch，awslogs ..）
+swapping 如何工作。swappiness 是什么。（swapon -s，/proc/sys/vm/swappiness，sysctl vm.swappiness ..）
+能轻松使用脚本语言。Bash 是必须了解的（其他脚本语言也是非常有用的，如 Python，Perl ..）。
+掌握有用的命令，例如进程监控命令（ps，top，htop，atop ..），系统性能命令（nmon，iostat，sar，vmstat..）和网络故障排除和分析（nmap，tcpdump，ping，traceroute，airmon，airodump ..）。
+你的备份策略是什么？如何测试备份的可靠性？
+你知道 ext4，ntfs，fat？知道联合文件系统（Union FS）吗？
+如何在系统上查看 / 设置网络配置？
+如何在具有不同子网的计算机上设置静态 / 动态 IP 地址？（提示：CIDR）
+使用网络数据包分析来分析和了解网络的工作原理：tcpdump，Wireshark ..
+你熟悉 OSI 模型和 TCP/IP 模型的规范吗？TCP 和 UDP 有什么区别？你知道 vxlan 吗？
+如何设置防火墙（iptables，至少知道 ufw）：设置规则，列出规则，路由流量，阻止协议 / 端口 ..
+如何查看 / 设置 / 备份路由器设置？
+DNS 如何工作？如何设置 DNS 服务器（Bind，Unbound，PowerDNS，Dnsmasq ..）？递归（recursive）和权威（authoritative）DNS 有什么区别？如何排除 DNS 故障（nslookup，dig ..）
+熟悉 DNS 和 A，AAAA，C，CNAME，TXT 记录
+当你在浏览器中点击 google.com 时会发生什么？从浏览器的缓存、本地 DNS 缓存、本地网络配置（hosts 文件）、路由、DNS、网络、Web 协议中，缓存系统到 Web 服务器（如果深入分析，最基本的问题也很难回答）。
+熟悉 CDN 提供商（例如 Akamai 等）
+熟悉 SSL/TLS 的工作原理以及数字证书的工作原理（https）
+了解 SSL 证书（需要加密）
+熟悉更安全的协议和工具：TLS，STARTTLS，SCP，SSH，SFTP，FTPS ..
+了解 PPTP，OpenVPN，L2TP/IPSec 之间的区别
+学习为域设置记录集（可以使用 Route53 或 CloudFlare 等托管云服务）
+SSH 如何工作，如何调试它，如何生成 ssh 密钥以及无密码登录到其他计算机什么是 init 系统？你知道 Systemd（自 15.04 以来由 Ubuntu 使用），Upstart（由 Ubuntu 开发），SysV ..
+用任何软件的源代码编译它（gcc，make 和其他相关内容）
+如何通过终端用不同的格式压缩 / 解压缩文件（主要是：tar/tar.gz）
+如何设置 Web 服务器（Apache，Nginx ..）
+学习使用“awk，sed，sort，uniq”操作 Nginx/Apache 日志文件
+Nginx 和 Apache 有什么区别？什么时候使用 Nginx？什么时候使用 Apache？在同一个 Web 应用程序中，何时以及如何同时使用它们？
+如何设置反向代理（Nginx ..）
+如何设置缓存服务器（Squid，Nginx，Varnish ..）
+如何设置负载均衡器（HAproxy，Nginx ..）
+如何为您的微服务建立 API 网关（Ambassador，Kong，Traefik，Nginx ..）
+熟悉 Systemd 以及如何使用 systemctl 和 journalctl 等命令分析和管理服务
+熟悉 OAuth、SAML、Auth0 集成
+熟悉 RESTful API，Webhooks，GraphQL，gRPC
+确保 ES 集群安全（XPack（商业），OpenSource：ReadOnlyREST，Search Guard）
+使用 snapshot API 或 esdump 进行 ES 备份（快照和增量）（注意：需要 nodejs/npm）
+使用 DB 备份
+学习 Python（pip + setup.py）和 BASH。是否开始使用 Golang 作为脚本语言？尝试一下吧。
+发展云计算技能。从选择云基础架构提供商开始：Amazon Web Services，Google Cloud Platform，Digitalocean，Microsoft Azure。或者使用 OpenStack 创建自己的私有云。
+staging 服务器怎么样？单元测试的测试策略是什么？端到端？真的需要 staging 服务器吗？Google 下“staging servers must die”。
+阅读有关 PaaS/Iaas/Saas/CaaS/FaaS/DaaS 和无服务器架构的信息
+了解如何通过 CLI 中的 Cloud Shell，或你的程序中的 Cloud SDK，来使用和配置云资源
+了解如何使用至少一个配置管理和远程执行工具（Ansible，Puppet，SaltStack，Chef 等）。您的选择应基于以下标准：语法，性能，模板语言，推拉模型，性能，架构，与其他工具的集成，可伸缩性，可用性等等。
+用于 image 构建的 Packer
+将 Jenkins 集成到 CI/CD 中
+设置 Consul（用于服务发现）
+开始研究“基础架构即代码”（infrastructure as code），以及基础架构配置自动化工具，如 Terraform 和 Packer
+开始研究容器和 Docker。容器是底层架构（cgroups 和 namespaces），它是如何工作的？
+开始熟悉基本的 Docker 命令（logs/inspect/top/ps/rm）。另外得研究 docker hub（push/pull image）
+开始研究容器编排工具：Docker Swarm，Kubernetes，Mesosphere DC/OS，AWS ECS
+阅读有关无状态和有状态应用程序的知识
+学习为您的应用程序构建小型的 docker image（alpine 比较合适）。仅安装所需的包就够了。
+了解默认运行服务的最常用端口号（如：SSH（22），Web（80），HTTP/S（443）等）
+从分布式角度学习网络（在容器世界中建立网络）。利用分布式系统中的 8 个谬论，让自己轻松应对。
+了解 L4/L7 负载均衡器。
+了解如何确保代理服务器和反向代理服务器的安全（Nginx，Traefik，Ambassador ..），并了解它们的网络系统是如何工作的。
+熟悉帮助创建可分发和可移植开发环境的工具（例如：Vagrant 和 Docker）。
+部署应用程序时，管理私密信息。Hashicorp Vault 会帮助你。
+了解 AWS SQS，Google PubSub 或其它替代方案。
+熟悉 Kafka，AWS Kinesis 或其它替代方案。
+了解 AWS RDS，大多数时候 Ops 发现很容易将普通任务委派给服务提供商以避免额外的工作，但这会带来一些费用。
+如果你在使用 Kubernetes，那么了解它的所有组件和工作。
+学习如何首先处理 K8s 内置功能，然后学习 Helm/Istio。
+了解监控的方式和内容（从操作系统和应用程序的角度来看）。
+一旦到了合适的阶段，接着会需要追踪（Tracing）来帮助理解和挖掘，并且应用程序需要直接支持它
+如果您正在处理（大）数据工程相关应用程序，那么得熟悉 Hadoop，HBase，Zookeeper，Spark 以及如何设置相关集群
+学习如何根据应用需求设置和调整 Redis，如何添加身份验证。
+了解应用程序的性质：CPU 密集型，内存密集型，I/O 密集型，然后了解如何相应地进行处理。
+学习根据需要在不同类型的数据库之间进行选择：SQL，NoSQL，TSDB，图形数据库 ……
+学习管理 IAM 角色 / 权限以及如何管理不同用户的密钥（AWS IAM，GCP IAM ..）。
+如果你喜欢分享并帮助其他人解决遇到过的问题，请将代码发布到 GitHub。
+学习对基础架构和应用程序进行基准测试以填补空白。
+不要直接去执行。先可视化最终目标、画图、与开发人员详细讨论、毫不犹豫地提问、让问题彻底变得愚蠢。
+不时做小型演示或 PoC 以便更好地理解。
+你熟悉 IDE（Sublime Text，Atom，Eclipse ..）吗？
+深入了解 DB（MySQL 或任何其它你喜欢的数据库）。
+了解 Redis/Memcache 以及类似工具。
+了解微服务架构的优缺点，并开始构建类似的架构。
+了解如何配置和使用持续集成和持续交付工具，如 Jenkins，Travis CI，Buildbot，GoCd。将这些工具与其它工具（如 Selenium，构建工具，配置管理软件，Docker，云供应商的 SDK 等）集成是非常有帮助的。
+学习分布式版本控制系统 Git 及其基本命令（pull/push/commit/clone/branch/merge/logs 等）。了解 git 工作流程。你知道如何将 Git 存储库恢复到以前的提交吗？
+如何使用 SSH 密钥。尝试使用 Github，Bitbucket 或 Gitlab 等来配置对 repo/account 的无密码访问。
+熟悉内核版本的混乱以及如何修补它们。
+了解如何生成校验（md5，SHA ..）以验证任何文件的完整性。
+了解单体（Monolithic）和微服务（Microservices）架构之间的区别。
+如何实现零宕机部署？制定回滚、自修复、自动扩展的策略是什么？
+了解可扩展性和高度分布式系统，如何让它们一直保持运行状态？
+熟悉 API 和服务：RESTfull，RESTful-like，API 网关，Lambda 函数，serverless 计算，SOA，SOAP，JMS，CRUD ...
+如何确保基础架构、网络和运行的应用程序的安全？
+你知道什么是 ChatOps 吗？是否尝试过使用一个已知框架？ Hubot，Lita，Cog？
+了解如何设置、配置和使用某些监控系统（Nagios，Zabix，Sensu，Prometheus ..）
+无论你做什么都“记录下来”，无论多么粗糙，做吧。以后你会感谢自己的。
+制作小的代码脚本以方便使用，记下命令或片段（通过 StackOverflow，Github Gists 或其它在线记事板），它会帮助你得到想要的东西。
+让 Google，StackExchange，Quora 和其它专业论坛成为你的朋友。
+读，读，读。在 Twitter/StackOverflow 上提问。
+与同一领域的研究员交谈并讨论问题。通过社区学习。
+不要试图解决所有问题。永远记住一件事：没有人是一座孤岛。你不能做、学习、实现一切。要了解对于手头的任务最重要的是什么。
+阅读 DevOps 词汇表（请 Google 它）
+关注开源项目（Kubernetes/Docker 等）或者让你感到兴奋的东西。
+关注来自社区的志同道合的人，并了解最新的科技趋势。
+尝试搭建良好的开发实践以及坚实的架构。
+了解如何在生产级别进行扩展。
+了解如何在生产服务器中实时调试和跟踪运行的应用程序。
+关注一些合适的科技公司的技术博客（我们关注了：Google/Uber/Quora/Github/Netflix）。这是可以直接从专家那里学习的地方，并有机会看到他们解决任何问题的方法。
+浏览资讯聚合类网站，如 Reddit，hackernews，medium 等。
+关注志同道合的开发人员和技术公司。 （我总是阅读文章和观看谈话 / 会议，事后剖析（post-mortems）是我最喜欢的内容。我也关注一些 github 库看看我使用的技术发生了什么。）
+了解开源以及如何为开源项目做出贡献。
+如果系统出现问题，您应该能够进行事后剖析。详细记录出现了什么问题，以及如何防止它再次发生。
+尝试学习 StackOverflow 的专家如何解决问题。永远记住，方法是不断变化的，不像基础知识总是保持不变。
+读书。
+最后这点也很重要...... 不要假设任何事情，永远不要把现实视为理所当然，总是去尝试并享受旅程。
+
+

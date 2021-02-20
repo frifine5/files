@@ -1,0 +1,52 @@
+npm install file-saver xlsx -S
+
+npm install script-loader -D
+
+在 /build/webpack.base.config.js 的resolve 模块中添加一个别名
+
+
+resolve: {
+    extensions: ['.js', '.vue', '.json'],
+    alias: {
+      'vue$': 'vue/dist/vue.esm.js',
+      '@': resolve('src'),
+      'vendor': path.resolve(__dirname, 'src/vendor') // 添加一个别名
+    }
+  }
+
+
+
+// 调用第三方库
+   exportExcel() {
+        let sourceOriginAmount = this.data; // 需要导出的数据，可以动态获取
+        this.loading = true; // 设置一个loading，生成Excel需要时间
+        import('@/vendor/Export2Excel.js').then(excel => { // 导入js模块
+          const tHeader = ['序号', '印章编号', '用户编号',  '印章名称', '申请时间']; // 导出excel 的标题
+          const filterVal = ['index', 'signatureCode',"customerId", "personName", "createTime"]; // 每个标题对应的字段
+
+          const list = (sourceOriginAmount || []).map((item, key) => { // 通过 map 方法遍历，组装数据成上面的格式
+            return {
+              index: key + 1,
+              signatureCode: item.signatureCode,
+              customerId: item.customerId,
+              personName: item.personName,
+              createTime: new Date(item.createTime).format('yyyy-MM-dd hh:mm:ss')
+            };
+          });
+
+          if (list) {
+            const data = this.formatJson(filterVal, list); // 生成json数据
+            excel.export_json_to_excel({ // 调用excel方法生成表格
+              header: tHeader,
+              data,
+              filename: '个人有效印章表'
+            });
+          } else {
+            alert('暂无无数据');
+          }
+          this.loading = false;
+        })
+      },
+      formatJson (filterVal, jsonData) {
+        return jsonData.map(v => filterVal.map(j => v[j]));
+      },
